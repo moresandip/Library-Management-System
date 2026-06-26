@@ -1,0 +1,12 @@
+node_modules/
+.env
+.DS_Store
+package-lock.json
+
+# Exclude AI agent and IDE metadata
+.claude/
+.cursor/
+.vibecheck/
+workflows/
+.github/
+CLAUDE.md
