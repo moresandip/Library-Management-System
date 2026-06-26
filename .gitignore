@@ -10,3 +10,5 @@ package-lock.json
 workflows/
 .github/
 CLAUDE.md
+jsconfig.json
+.vscode/
