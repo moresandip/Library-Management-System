@@ -394,5 +394,34 @@ All error responses adhere to the standard JSON format with appropriate HTTP Sta
 *   **403 Forbidden**: Role restriction violations (e.g., members trying to add books, or librarians trying to borrow books).
 *   **404 Not Found**: Book, member, or endpoint resource not found.
 *   **500 Internal Server Error**: Unhandled server exceptions.
-#   L i b r a r y - M a n a g e m e n t - S y s t e m  
- 
+
+---
+
+## 🔒 Authentication Flow
+
+1.  **Register Member**: Users signup via `POST /api/auth/register` (automatically assigned the `member` role). Librarian accounts are seeded directly via database scripts.
+2.  **Verify & Token Generation**: Users authenticate via `POST /api/auth/login`. The server verifies the credentials using `bcrypt.compare` and signs a JWT containing the user's `id` and `role`.
+3.  **Request Authorization**: For all subsequent requests to protected endpoints, the client must attach the JWT token in the `Authorization` header as:
+    `Authorization: Bearer <JWT_TOKEN>`
+4.  **Role Validation Middleware**: The backend intercepts requests, verifies the JWT, and enforces Role-Based Access Control (RBAC):
+    *   **Members** are blocked from CRUD operations on books and member accounts.
+    *   **Librarians** are blocked from borrowing or returning books.
+
+---
+
+## 🚀 Deployment
+
+The backend application is successfully deployed on **Render** linked with a **MongoDB Atlas** cloud database:
+*   **Live API URL**: https://library-management-system.onrender.com
+
+---
+
+## 📮 Postman Collection
+
+To test the APIs using Postman:
+1.  **Import Routes**: Setup request templates in Postman for the endpoints described in the [API Documentation](#-api-documentation) section.
+2.  **Set Environment Token**: Upon calling `POST /api/auth/login`, copy the returned JWT `token`.
+3.  **Bearer Authentication**: In Postman, go to the **Authorization** tab of the requests/collection, select **Bearer Token** from the dropdown, and paste the token there.
+4.  **Validate RBAC**: 
+    *   Test accessing Librarian APIs (e.g. `GET /api/members`) with a Member token to verify `403 Forbidden` response.
+    *   Test accessing Member APIs (e.g. `POST /api/books/:id/borrow`) with a Librarian token to verify `403 Forbidden` response.
